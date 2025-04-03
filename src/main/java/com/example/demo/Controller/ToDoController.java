@@ -31,4 +31,25 @@ public class ToDoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", notFoundToDo.getMessage()));
         }
     }
+
+    @DeleteMapping("/todo/{id}")
+    public ResponseEntity<Map<String,String>> deleteToDo(@PathVariable Long id) {
+        
+        if (toDoService.delete(id)) return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("message", "삭제 성공"));
+        else return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", "삭제 실패"));
+    }
+
+    @PatchMapping("/todo/{id}")
+    public ResponseEntity<?> updateToDo(@PathVariable Long id, @RequestBody ToDoDto toDoDto) {
+
+        try {
+            ToDoDto updateToDo = toDoService.update(id, toDoDto);
+            return ResponseEntity.status(HttpStatus.OK).body(updateToDo);
+        } catch (NotFoundToDo notFoundToDo) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", notFoundToDo.getMessage()));
+        }
+    }
 }
